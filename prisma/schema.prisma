@@ -26,7 +26,7 @@ model Pet {
   id              String   @id @default(uuid())
   nome            String
   especie         String
-  data_nascimento DateTime @db.Date
+  data_nascimento DateTime @db.Date 
   descricao       String
   tamanho         String
   personalidade   String
