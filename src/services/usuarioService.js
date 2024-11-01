@@ -27,7 +27,6 @@ export const usuarioService = {
     },
 
     atualizarUsuario: async(id, nome, email, senha, telefone, tipo) => {
-        console.log(id, nome, email, senha, telefone, tipo)
         return await prisma.usuarios.update({
             where: { id: Number(id) },
             data: { nome, email, senha, telefone, tipo }
