@@ -3,11 +3,11 @@ import { prisma } from "../utils/prisma.js";
 export const usuarioService = {
 
     listarUsuarios: async() => {
-        return await prisma.usuario.findMany();
+        return await prisma.usuarios.findMany();
     },
 
     buscarUsuarioPorId: async(id) => {
-        return await prisma.usuario.findUnique({
+        return await prisma.usuarios.findUnique({
             where: {
                 id
             }
@@ -27,14 +27,14 @@ export const usuarioService = {
     },
 
     atualizarUsuario: async(id, nome, email, senha, telefone, tipo) => {
-        return await prisma.usuario.update({
+        return await prisma.usuarios.update({
             where: { id },
             data: { nome, email, senha, telefone, tipo }
         });
     },
 
     deletarUsuario: async(id) => {
-        return await prisma.usuario.delete({
+        return await prisma.usuarios.delete({
             where: { id }
         });
     }
