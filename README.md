@@ -1,7 +1,3 @@
-Aqui está um README mais detalhado e profissional para o Sistema Pata:
-
----
-
 # Sistema Pata - Sistema de Adoção de Pets
 
 ## Índice
