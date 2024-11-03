@@ -1,9 +1,6 @@
 import express from "express";
 import { petRouter } from "./routes/petRouter.js";
 import { userRouter } from "./routes/usuarioRouter.js";
-import dotenv from "dotenv";
-
-dotenv.config(); 
 
 const app = express();
 

@@ -9,7 +9,7 @@ export const usuarioService = {
     buscarUsuarioPorId: async(id) => {
         return await prisma.usuarios.findUnique({
             where: {
-                id
+                id: Number(id)
             }
         })
     },
@@ -27,15 +27,16 @@ export const usuarioService = {
     },
 
     atualizarUsuario: async(id, nome, email, senha, telefone, tipo) => {
+        console.log(id, nome, email, senha, telefone, tipo)
         return await prisma.usuarios.update({
-            where: { id },
+            where: { id: Number(id) },
             data: { nome, email, senha, telefone, tipo }
         });
     },
 
     deletarUsuario: async(id) => {
         return await prisma.usuarios.delete({
-            where: { id }
+            where: { id: Number(id) }
         });
     }
 
