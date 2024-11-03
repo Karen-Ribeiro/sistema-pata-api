@@ -38,7 +38,7 @@ model usuarios {
   id       Int       @id @default(autoincrement())
   nome     String    @db.VarChar(100)
   email    String    @db.VarChar(100)
-  senha    String    @db.VarChar(32)
+  senha    String    @db.VarChar(100)
   telefone String    @db.VarChar(11)
   tipo     tipo?
   adocoes  adocoes[]
