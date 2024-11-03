@@ -1,5 +1,4 @@
 import { filtrarDados } from "../utils/filtrarDados.js";
-import { formatarData } from "../utils/filtrarDatas.js";
 import { prisma } from "../utils/prisma.js"
 
 export const petService = {
