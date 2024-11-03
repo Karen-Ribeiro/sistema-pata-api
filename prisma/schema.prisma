@@ -13,34 +13,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id            String    @id @default(uuid())
-  nome_completo String
-  email         String    @unique
-  telefone      String
-  endereco      String
-  adocoes       Adocoes[]
+model adocoes {
+  id          Int      @id @default(autoincrement())
+  pet_id      Int
+  usuario_id  Int
+  data_adocao DateTime @db.Timestamp(6)
+  pets        pets     @relation(fields: [pet_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuarios    usuarios @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Pet {
-  id              String   @id @default(uuid())
-  nome            String
-  especie         String
-  data_nascimento DateTime @db.Date 
-  descricao       String
-  tamanho         String
-  personalidade   String
-  foi_adotado     Boolean  @default(false)
-
-  adocao Adocoes?
+model pets {
+  id              Int            @id @default(autoincrement())
+  nome            String         @db.VarChar(100)
+  especie         String         @db.VarChar(100)
+  data_nascimento DateTime       @db.Date
+  descricao       String         @db.VarChar(255)
+  tamanho         tamanho?
+  personalidade   personalidade?
+  adotado         Boolean        @default(false)
+  adocoes         adocoes[]
 }
 
-model Adocoes {
-  id          String   @id @default(uuid())
-  id_adotante String
-  id_pet      String   @unique
-  data        DateTime @default(now())
-
-  adotante Usuario @relation(fields: [id_adotante], references: [id])
-  pet      Pet     @relation(fields: [id_pet], references: [id])
+model usuarios {
+  id       Int       @id @default(autoincrement())
+  nome     String    @db.VarChar(100)
+  email    String    @db.VarChar(100)
+  senha    String    @db.VarChar(32)
+  telefone String    @db.VarChar(11)
+  tipo     tipo?
+  adocoes  adocoes[]
 }
+
+enum personalidade {
+  calmo
+  brincalhao
+  independente
+}
+
+enum tamanho {
+  pequeno
+  medio
+  grande
+}
+
+enum tipo {
+  usuario
+  administrador
+}
+
