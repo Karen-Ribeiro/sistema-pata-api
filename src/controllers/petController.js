@@ -3,7 +3,11 @@ import { petService } from "../services/petService.js"
 export const petController  = {
     
     async listarPets(req, res) {
-        const result = await petService.listaPets()
+        const result = await petService.listaPets({
+            personalidade: req.query.personalidade,
+            tamanho: req.query.tamanho,
+            especie: req.query.especie
+        })
         res.status(200).send(result);
     },
 
