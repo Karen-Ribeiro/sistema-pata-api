@@ -1,30 +1,27 @@
 const jwt = require("jsonwebtoken");
-const { PrismaClient } = require("@prisma/client");
-const passwordHash = process.env.JWT_SECRET;
-
-const prisma = new PrismaClient();
+import { prisma } from "../utils/prisma.js";
 
 const verifyToken = async (req, res, next) => {
-	const { authorization } = req.headers;
+	const { autorizacao } = req.headers;
 
-	if (!authorization) {
+	if (!autorizacao) {
 		return res.status(401).json({ message: "Não autorizado." });
 	}
 
-	const token = authorization.split(" ")[1];
+	const token = autorizacao.split(" ")[1];
 
 	try {
-		const { id } = jwt.verify(token, passwordHash);
+		const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
-		const userExists = await prisma.user.findUnique({
-			where: { id: Number(id) }
+		const usuarioExiste = await prisma.usuario.findFirst({
+			select: { id: Number(id) }
 		});
 
-		if (!userExists) {
+		if (!usuarioExiste) {
 			return res.status(404).json({ message: "Usuário não encontrado." });
 		}
 
-		const { senha, ...user } = userExists;
+		const { senha, ...user } = usuarioExiste;
 
 		req.user = user;
 
