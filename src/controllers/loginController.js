@@ -1,62 +1,41 @@
-const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
+import { prisma } from "../utils/prisma.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const prisma = new PrismaClient();
+export const loginController = {
+	async loginUsuario(req, res) {
+		const { email, senha } = req.body;
 
-const createUser = async (name, email, password) => {
-	const encryptedPassword = await bcrypt.hash(password, 10);
-
-	const user = await prisma.user.create({
-		data: {
-			name: name,
-			email: email.toLowerCase(),
-			password: encryptedPassword
-		}
-	});
-
-	return user; // Retorna o usuário criado, se necessário
-};
-
-const updateUser = async (id, name, email, password) => {
-	try {
-		const data = { name, email };
-
-		if (password) {
-			const encryptedPassword = await bcrypt.hash(password, 10);
-			data.password = encryptedPassword; // Adiciona a senha se fornecida
+		if (!email || !senha) {
+			return res.status(400).json({ message: "É obrigatório email e senha" });
 		}
 
-		const user = await prisma.user.update({
-			where: { id: Number(id) }, // Converta para número se necessário
-			data
-		});
-
-		return user; // Retorna o usuário atualizado, se necessário
-	} catch (error) {
-		console.log(error.message);
-		throw error; // Lança o erro para que seja tratado em outro lugar, se necessário
-	}
-};
-
-const verifyEmailUser = async (email, id) => {
-	try {
-		if (id) {
-			const emailExist = await prisma.user.findUnique({
-				where: { id: Number(id) } // Converta para número se necessário
+		try {
+			const usuario = await prisma.usuarios.findFirst({
+				where: { email: email.toLowerCase() }
 			});
 
-			if (emailExist && emailExist.email === email) return false; // Se o email for igual ao do usuário
+			if (!usuario) return res.status(404).json({ message: "Usuário não encontrado." });
+
+			const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+			if (!senhaValida) return res.status(400).json({ message: "Email ou senha não confere." });
+
+			const usuarioTokenDados = {
+				id: usuario.id,
+				email: usuario.email
+			};
+
+			const token = jwt.sign(usuarioTokenDados, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+			const { senha: _, ...usuarioDados } = usuario;
+
+			return res.status(200).json({ usuario: usuarioDados, token });
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ message: "Erro interno no servidor" });
+		} finally {
+			await prisma.$disconnect();
 		}
-
-		const emailExist = await prisma.user.findUnique({
-			where: { email: email.toLowerCase() }
-		});
-
-		return emailExist !== null; // Retorna true se o email existir, caso contrário false
-	} catch (error) {
-		console.log(error.message);
-		throw error; // Lança o erro para que seja tratado em outro lugar, se necessário
 	}
 };
-
-module.exports = { createUser, verifyEmailUser, updateUser };
