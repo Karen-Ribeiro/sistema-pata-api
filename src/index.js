@@ -1,15 +1,15 @@
 import express from "express";
 import { petRouter } from "./routes/petRouter.js";
-import { userRouter } from "./routes/usuarioRouter.js";
+import { usuarioRouter } from "./routes/usuarioRouter.js";
 import dotenv from "dotenv";
-import { userRouter } from "./routes/usuarioRouter.js";
+
 
 const app = express();
 
 app.use(express.json());
 
 app.use(petRouter());
-app.use(userRouter());
+app.use(usuarioRouter());
 
 dotenv.config();
 

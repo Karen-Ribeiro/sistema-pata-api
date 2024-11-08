@@ -3,7 +3,15 @@ import bcrypt from "bcrypt";
 
 export const usuarioService = {
 	listarUsuarios: async () => {
-		return await prisma.usuarios.findMany();
+		return await prisma.usuarios.findMany({
+			select: {
+				id: true,
+				nome: true,
+				email: true,
+				telefone: true,
+				tipo: true
+			}
+		});
 	},
 
 	buscarUsuarioPorId: async (id) => {
@@ -20,7 +28,7 @@ export const usuarioService = {
 		return await prisma.usuarios.create({
 			data: {
 				nome,
-				email,
+				email: email.toLowerCase(),
 				senha: passwordEncripitado,
 				telefone,
 				tipo
@@ -28,13 +36,17 @@ export const usuarioService = {
 		});
 	},
 
-	atualizarUsuario: async (id, nome, email, senha, telefone, tipo) => {
-		const passwordEncripitado = await bcrypt.hash(senha, 10);
-
-		console.log(id, nome, email, senha, telefone, tipo);
+	atualizarUsuario: async (id, dados) => {		
 		return await prisma.usuarios.update({
 			where: { id: Number(id) },
-			data: { nome, email, senha: passwordEncripitado, telefone, tipo }
+			data: dados,
+			select: {
+				id: true,
+                nome: true,
+                email: true,
+				tipo: true,
+				telefone: true
+			}
 		});
 	},
 
@@ -42,5 +54,5 @@ export const usuarioService = {
 		return await prisma.usuarios.delete({
 			where: { id: Number(id) }
 		});
-	}
+	},
 };
