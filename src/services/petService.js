@@ -1,4 +1,3 @@
-import { filtrarDados } from "../utils/filtrarDados.js";
 import { prisma } from "../utils/prisma.js"
 
 export const petService = {
@@ -39,14 +38,20 @@ export const petService = {
         });
     },
 
-    atualizarPet: async (id, dados) => {
-        const dadosAtualizados = filtrarDados(dados);
-
+    atualizarPet: async (id, nome, especie, data_nascimento, descricao, tamanho, personalidade) => {
+        const [dia, mes, ano] = data_nascimento.split('-').map(Number);
         return await prisma.pets.update({
             where: {
                 id: Number(id),
             },
-            data: dadosAtualizados,
+            data: {
+                nome,
+                especie,
+                data_nascimento: new Date(ano, mes, dia),
+                descricao,
+                tamanho,
+                personalidade
+            },
         });
 
     },
