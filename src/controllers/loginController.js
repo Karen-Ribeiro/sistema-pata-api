@@ -29,7 +29,9 @@ export const loginController = {
 
 			const token = jwt.sign(usuarioTokenDados, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-			return res.status(200).json({ token });
+			const { senha: _, ...usuarioDados } = usuario;
+
+			return res.status(200).json({usuario: usuarioDados, token });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ message: "Erro interno no servidor" });
