@@ -1,29 +1,37 @@
 import { Router } from "express";
 import { usuarioController } from "../controllers/usuarioController.js";
+import { loginController } from "../controllers/loginController.js";
+import { verificarToken } from "../middleware/verificarToken.js";
+import { authEditarInformacoes } from "../middleware/authEditarInformacoes.js";
+import { validarDadosUsuario } from "../middleware/validarDadosUsuario.js";
+import { verificarAdm } from "../middleware/verificarAdmin.js";
 
-export const userRouter = () => {
-    const router = Router();
+export const usuarioRouter = () => {
+	const router = Router();
 
-    router.get('/usuario', async (req, res) => {
-        return await usuarioController.listarUsuarios(req, res);
-    })  
+	router.post("/login", async (req, res) => {
+		return await loginController.loginUsuario(req, res);
+	});
 
-    router.get('/usuario/:id', async (req, res) => {
-        return await usuarioController.buscarUsuarioPorId(req, res);
-    })
+	router.get("/usuario", verificarToken, verificarAdm, async (req, res) => {
+		return await usuarioController.listarUsuarios(req, res);
+	});
 
-    router.post('/usuario', async (req, res) => {
-        return await usuarioController.criarUsuario(req, res);
-    })
+	router.get("/usuario/:id", verificarToken, authEditarInformacoes, async (req, res) => {
+		return await usuarioController.buscarUsuarioPorId(req, res);
+	});
 
-    router.put('/usuario/:id', async (req, res) => {
-        return await usuarioController.atualizarUsuario(req, res);
-    })
+	router.post("/usuario", validarDadosUsuario, async (req, res) => {
+		return await usuarioController.criarUsuario(req, res);
+	});
 
-    router.delete('/usuario/:id', async (req, res) => {
-        return await usuarioController.deletarUsuario(req, res);
-    })
+	router.put("/usuario/:id", verificarToken, authEditarInformacoes, validarDadosUsuario, async (req, res) => {
+		return await usuarioController.atualizarUsuario(req, res);
+	});
 
-    return router;
+	router.delete("/usuario/:id", verificarToken, authEditarInformacoes, async (req, res) => {
+		return await usuarioController.deletarUsuario(req, res);
+	});
 
-}
+	return router;
+};

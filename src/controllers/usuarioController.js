@@ -1,5 +1,8 @@
 import { usuarioService } from "../services/usuarioService.js";
-import { validarTelefone, validarEmail, validarTipoUsuario, validarTelefoneUnico, validarEmailUnico } from "../utils/validarDados.js"; // Supondo que as validações foram movidas para uma pasta utils
+import { tiposDeErro } from "../utils/error.js";
+import { prisma } from "../utils/prisma.js";
+import { validarTelefoneUnico, validarEmailUnico } from "../utils/validarDados.js";
+import bcrypt from "bcrypt";
 
 export const usuarioController = {
 
@@ -28,30 +31,13 @@ export const usuarioController = {
     async criarUsuario(req, res) {
         
         const { nome, email, senha, telefone, tipo } = req.body;
-
-        if (!nome || !email || !senha || !telefone || !tipo) {
-            return res.status(400).send({ error: 'Todos os campos são obrigatórios' });
-        }
-
-        if (!validarTelefone(telefone)) {
-            return res.status(400).send({ error: 'Telefone inválido. Deve conter 11 dígitos' });
-        }
-
-        if (!validarEmail(email)) {
-            return res.status(400).send({ error: 'Email inválido' });
-        }
-
-        if (!validarTipoUsuario(tipo)) {
-            return res.status(400).send({ error: 'Tipo de usuário inválido. Deve ser "usuario" ou "administrador"' });
-        }
-
         try {
             if (!(await validarTelefoneUnico(telefone, usuarioService))) {
-                return res.status(400).send({ error: 'Telefone já está em uso' });
+                return res.status(400).send(tiposDeErro.dadosInvalidos('Telefone já está em uso'));
             }
 
             if (!(await validarEmailUnico(email, usuarioService))) {
-                return res.status(400).send({ error: 'Email já está em uso' });
+                return res.status(400).send(tiposDeErro.dadosInvalidos('Email já está em uso'));
             }
 
             const result = await usuarioService.criarUsuario(nome, email, senha, telefone, tipo);
@@ -64,30 +50,43 @@ export const usuarioController = {
     async atualizarUsuario(req, res) {
         const { id } = req.params;
         const { nome, email, senha, telefone, tipo } = req.body;
-
+        const passwordEncripitado = await bcrypt.hash(senha, 10);
         try {
             const usuarioExistente = await usuarioService.buscarUsuarioPorId(id);
             if (!usuarioExistente) {
-                return res.status(404).send({ error: 'Usuário não encontrado' });
+                return res.status(404).send(tiposDeErro.usuarioNaoEncontrado);
             }
 
-            if (telefone && !validarTelefone(telefone)) {
-                return res.status(400).send({ error: 'Telefone inválido. Deve conter 11 dígitos' });
+            const usuario = prisma.usuarios.findUnique({
+                where: { id: Number(id) },
+                select: {
+                    email: true,
+                    telefone: true
+                }
+            })
+            const dadosAtualizados = {
+                nome,
+                senha: passwordEncripitado,
+                tipo
             }
 
-            if (email && !validarEmail(email)) {
-                return res.status(400).send({ error: 'Email inválido' });
+            if (usuario.email !== email.toLowerCase()) {
+                dadosAtualizados.email = email.toLowerCase();
             }
 
-            if (telefone && !(await validarTelefoneUnico(telefone, usuarioService))) {
-                return res.status(400).send({ error: 'Telefone já está em uso' });
+            if (usuario.telefone !== telefone) {
+                dadosAtualizados.telefone = telefone;
             }
 
-            if (email && !(await validarEmailUnico(email, usuarioService))) {
-                return res.status(400).send({ error: 'Email já está em uso' });
+            if (!dadosAtualizados.telefone && !(await validarTelefoneUnico(telefone, usuarioService))) {
+                return res.status(400).send(tiposDeErro.dadosInvalidos('Telefone já está em uso'));
             }
 
-            const result = await usuarioService.atualizarUsuario(id, nome, email, senha, telefone, tipo);
+            if (!dadosAtualizados.email && !(await validarEmailUnico(email, usuarioService))) {
+                return res.status(400).send(tiposDeErro.dadosInvalidos('Email já está em uso'));
+            }
+
+            const result = await usuarioService.atualizarUsuario(id, dadosAtualizados);
             res.status(200).send(result);
         } catch (error) {
             res.status(500).send({ error: 'Erro ao atualizar usuário', message: error.message });
@@ -99,7 +98,7 @@ export const usuarioController = {
         try {
             const usuarioExistente = await usuarioService.buscarUsuarioPorId(id);
             if (!usuarioExistente) {
-                return res.status(404).send({ error: 'Usuário não encontrado' });
+                return res.status(404).send(tiposDeErro.usuarioNaoEncontrado);
             }
 
             await usuarioService.deletarUsuario(id);
