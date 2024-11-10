@@ -4,11 +4,9 @@
 1. [Sobre o Projeto](#sobre-o-projeto)
 2. [Funcionalidades](#funcionalidades)
 3. [Tecnologias Utilizadas](#tecnologias-utilizadas)
-4. [Estrutura do Projeto](#estrutura-do-projeto)
-5. [Instalação e Configuração](#instalação-e-configuração)
-6. [Como Usar](#como-usar)
-7. [Contribuição](#contribuição)
-8. [Licença](#licença)
+4. [Instalação e Configuração](#instalação-e-configuração)
+5. [Como Usar](#como-usar)
+6. [Contribuição](#contribuição)
 
 ---
 
