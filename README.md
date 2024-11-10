@@ -53,7 +53,7 @@ A gestão manual de dados no abrigo gerava atrasos e desorganização, dificulta
    - **Filtro Avançado**: Permite busca por tamanho e personalidade.
    - **Autenticação e Perfis de Usuário**:
      - **Administração**: Apenas administradores podem cadastrar e gerenciar pets e adotantes.
-     - **Adotantes**: Usuários adotantes podem visualizar seu histórico de adoções e pets favoritos.
+     - **Adotantes**: Usuários adotantes podem visualizar seu histórico de adoções e realizar adoções.
 
 ## Tecnologias Utilizadas
 
@@ -214,9 +214,3 @@ A gestão manual de dados no abrigo gerava atrasos e desorganização, dificulta
 2. **Visualização de Pets**: Acesse a lista de pets disponíveis para encontrar informações e usar filtros.
 3. **Processo de Adoção**: Selecione um pet e finalize o processo para atualizar seu status.
 4. **Filtros**: Utilize as opções de filtro avançado para refinar a busca de pets com base em características como espécie, idade e personalidade.
-
-## Contribuição
-Contribuições são bem-vindas! Siga as diretrizes de contribuição e abra issues para melhorias ou para relatar problemas.
-
-## Licença
-Este projeto está licenciado sob a Licença MIT.
