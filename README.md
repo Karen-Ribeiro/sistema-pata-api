@@ -63,31 +63,103 @@ A gestão manual de dados no abrigo gerava atrasos e desorganização, dificulta
 - **Prisma ORM**: Gerenciamento de operações no banco de dados, com suporte a operações CRUD.
 - **Banco de Dados Relacional**: PostgreSQL ou MySQL, com o Prisma ORM para abstração.
 
-### Frontend
-- **React.js**: Biblioteca para construção de interfaces de usuário dinâmicas e interativas.
-- **Axios**: Para comunicação entre frontend e backend.
-- **CSS Modules / Styled Components**: Para estilização da aplicação, garantindo modularidade e escalabilidade.
+## Documentação da API
 
-## Estrutura do Projeto
+#### Registrar usuário
+```http
+  POST /usuario/
+```
 
-```plaintext
-Sistema-Pata/
-├── backend/
-│   ├── src/
-│   │   ├── controllers/       # Lógica dos endpoints de pets, adotantes e adoções
-│   │   ├── models/            # Definição dos schemas de dados com Prisma
-│   │   ├── routes/            # Rotas para pets, adotantes e adoções
-│   │   └── index.js           # Inicialização do servidor
-│   ├── prisma/                # Arquivos de configuração do Prisma e migrações de banco de dados
-│   └── .env                   # Variáveis de ambiente do backend
-├── frontend/
-│   ├── src/
-│   │   ├── components/        # Componentes React para interface de usuário
-│   │   ├── pages/             # Páginas principais (Landing, Lista de Pets, Cadastro, etc.)
-│   │   ├── services/          # Configurações de comunicação com API
-│   │   └── App.js             # Configuração e roteamento principal
-│   └── .env                   # Variáveis de ambiente do frontend
-└── README.md
+| Body        | Tipo     | Descrição                                             |
+| :---------- | :------- | :---------------------------------------------------- |
+| `nome`      | `string` | Tamanho mínimo de 3 caracteres.                        |
+| `email`     | `string` | Email deve ser único para cada usuário.          |
+| `senha`  | `string` | A senha deve ter no mínimo 8 caracteres.              |
+| `telefone`| `string` | O telefone deve conter 11 dígitos.                              |
+| `tipo` | `string` | usuario ou administrador.                            |
+
+##### Exemplo
+```json
+{
+    "nome": "joao silva",
+    "email": "silva1234@gmail.com",
+    "senha": "1234Joao!",
+    "telefone": "40029822111",
+    "tipo": "administrador"
+}
+```
+
+#### Registrar Pet
+```http
+  POST /pet/
+```
+
+| Body        | Tipo     | Descrição                                             |
+| :---------- | :------- | :---------------------------------------------------- |
+| `nome`      | `string` |  Nome do Pet.       |
+| `especie`     | `string` | Qual espécie pertence.         |
+| `data_nascimento`  | `string` | O formato da data deve ser dd-mm-yyy.              |
+| `descricao`| `string` | Um resumo breve sobre o animal.                              |
+| `tamanho` | `string` | pequno, medio ou grande.               |
+| `personalidade` | `string` | independente, calmo ou brincalhao    .                        |
+
+##### Exemplo
+```json
+{
+    "nome": "Iggy",
+    "especie": "cachorro",
+    "tamanho": "pequeno",
+    "personalidade": "independente",
+    "data_nascimento": "11-06-2014"
+}
+```
+
+#### Registrar Adoção
+```http
+  POST /adocao/
+```
+
+| Body        | Tipo     | Descrição                                             |
+| :---------- | :------- | :---------------------------------------------------- |
+| `pet_id`      | `string` |  ID do pet.       |
+| `user_id`     | `string` | ID do usuário.         |
+
+
+##### Exemplo
+```json
+{
+    "pet_id": "1",
+    "user_id": "1"
+}
+```
+
+#### Retorna todos os itens
+
+```http
+  GET /usuarios
+
+  GET /pets/
+
+  GET /adocoes/
+
+```
+#### Retorna um item
+
+```http
+  GET /usuario/{id}
+  
+  GET /pet/{id}
+  
+  GET /adocao/{id}
+
+  GET /adocao/usuario/{id}
+```
+
+#### Deletar itens 
+```http
+  DELETE /usuario/{id}
+
+  DELETE /pet/{id}
 ```
 
 ## Instalação e Configuração
@@ -105,43 +177,36 @@ Sistema-Pata/
    ```
 
 2. **Backend Setup**
-   - Entre na pasta `backend`:
+   - Entre na pasta `sistema-pata`:
      ```bash
-     cd backend
+     cd sistema-pata
      ```
    - Instale as dependências:
      ```bash
      npm install
      ```
-   - Configure as variáveis de ambiente no arquivo `.env` com as credenciais do banco de dados.
+   - Configure as variáveis de ambiente no arquivo `.env` com as credenciais do banco de dados, caso queira um modelo pronto, utilize como base o arquivo `.env copy`.
+   ```bash
+    DATABASE_URL=
+    
+    JWT_SECRET=
+
+    PORT=
+   ```
    - Execute as migrações do banco de dados:
      ```bash
      npx prisma migrate dev
      ```
    - Inicie o servidor:
      ```bash
-     npm start
+     npm run dev
      ```
 
-3. **Frontend Setup**
-   - Entre na pasta `frontend`:
-     ```bash
-     cd frontend
-     ```
-   - Instale as dependências:
-     ```bash
-     npm install
-     ```
-   - Configure as variáveis de ambiente do frontend.
-   - Inicie o servidor de desenvolvimento do React:
-     ```bash
-     npm start
-     ```
 
 ### Uso
 - Acesse a aplicação no navegador:
-  - **Frontend**: [http://localhost:3000](http://localhost:3000)
-  - **Backend**: [http://localhost:5000](http://localhost:5000)
+  - **Backend**: [http://localhost:3000](http://localhost:3000) 
+  - Caso não tenha colocado um outro valor na variável PORT, o valor por padrão sera 3000
 
 ## Como Usar
 

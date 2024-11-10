@@ -13,7 +13,7 @@ export const validarDadosUsuario = (req, res, next) => {
     }
 
     if (!validarSenha(senha)) {
-        return res.status(400).json(tiposDeErro.dadosInvalidos('Senha deve conter uma letra minúscula, uma letra maiúscula, um número e um caractere especial.'));
+        return res.status(400).json(tiposDeErro.dadosInvalidos('Senha deve conter uma letra minúscula, uma letra maiúscula, um número e um caractere especial. Com o tamanho total de no minímo 8 caracteres.'));
     }
 
     if (!validarEmail(email)) {

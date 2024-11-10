@@ -59,6 +59,12 @@ export const tiposDeErro = {
         message: "Recurso não encontrado.",
     },
 
+    adocaoNaoEncontrada: {
+        statusCode: 404,
+        type: 'Not Found',
+        message: "Adoção não encontrada.",
+    },
+
     dadosInvalidos: (message) => {
         return {
             statusCode: 400,

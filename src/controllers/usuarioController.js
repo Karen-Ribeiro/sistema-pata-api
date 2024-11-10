@@ -20,7 +20,7 @@ export const usuarioController = {
         try {
             const result = await usuarioService.buscarUsuarioPorId(id);
             if (!result) {
-                return res.status(404).send({ error: 'Usuário não encontrado' });
+                return res.status(404).send(tiposDeErro.usuarioNaoEncontrado);
             }
             res.status(200).send(result);
         } catch (error) {
