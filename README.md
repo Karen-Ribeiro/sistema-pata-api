@@ -108,6 +108,7 @@ A gestão manual de dados no abrigo gerava atrasos e desorganização, dificulta
 {
     "nome": "Iggy",
     "especie": "cachorro",
+    "descricao": "possui algumas habilidades bizarras",
     "tamanho": "pequeno",
     "personalidade": "independente",
     "data_nascimento": "11-06-2014"
