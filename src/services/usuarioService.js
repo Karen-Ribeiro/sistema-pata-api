@@ -2,8 +2,12 @@ import { prisma } from "../utils/prisma.js";
 import bcrypt from "bcrypt";
 
 export const usuarioService = {
-	listarUsuarios: async () => {
+	listarUsuarios: async (tipo) => {
+		const condicaoDeBusca = {
+			...(tipo && { tipo })
+		}
 		return await prisma.usuarios.findMany({
+			where: condicaoDeBusca,
 			select: {
 				id: true,
 				nome: true,
@@ -48,6 +52,20 @@ export const usuarioService = {
 				telefone: true
 			}
 		});
+	},
+
+	atualizarUsuarioAdmin: async (id, dados) => { 
+		return await prisma.usuarios.update({
+			where: { id: Number(id) },
+            data: dados,
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                tipo: true,
+                telefone: true
+            }
+		})
 	},
 
 	deletarUsuario: async (id) => {

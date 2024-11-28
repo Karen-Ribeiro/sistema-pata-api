@@ -15,7 +15,7 @@ export function validarTipoUsuario(tipo) {
 }
 
 export function validarSenha(senha) {
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/;
     return regexSenha.test(senha);
 }
 

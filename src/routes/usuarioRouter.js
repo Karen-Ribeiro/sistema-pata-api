@@ -13,7 +13,7 @@ export const usuarioRouter = () => {
 		return await loginController.loginUsuario(req, res);
 	});
 
-	router.get("/usuario", verificarToken, verificarAdm, async (req, res) => {
+	router.get("/usuarios", verificarToken, verificarAdm, async (req, res) => {
 		return await usuarioController.listarUsuarios(req, res);
 	});
 

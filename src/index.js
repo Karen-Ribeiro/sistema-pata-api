@@ -3,16 +3,15 @@ import { petRouter } from "./routes/petRouter.js";
 import { usuarioRouter } from "./routes/usuarioRouter.js";
 import { adocaoRouter } from "./routes/adocaoRouter.js";
 import dotenv from "dotenv";
-
+import cors from "cors"
 
 const app = express();
 
+app.use(cors())
 app.use(express.json());
-
 app.use(petRouter());
 app.use(usuarioRouter());
 app.use(adocaoRouter());
-
 dotenv.config();
 
 app.use((err, req, res, next) => {

@@ -8,7 +8,8 @@ export const usuarioController = {
 
     async listarUsuarios(req, res) {
         try {
-            const result = await usuarioService.listarUsuarios();
+            const tipo = req.query.tipo;
+            const result = await usuarioService.listarUsuarios(tipo);
             res.status(200).send(result);
         } catch (error) {
             res.status(500).send({ error: 'Erro ao listar usuários', message: error.message });
@@ -50,7 +51,67 @@ export const usuarioController = {
     async atualizarUsuario(req, res) {
         const { id } = req.params;
         const { nome, email, senha, telefone, tipo } = req.body;
-        const passwordEncripitado = await bcrypt.hash(senha, 10);
+        const dadosAtualizados = {};
+
+        try {
+            // Verifica se o usuário existe
+            const usuarioExistente = await usuarioService.buscarUsuarioPorId(id);
+            if (!usuarioExistente) {
+                return res.status(404).send(tiposDeErro.usuarioNaoEncontrado);
+            }
+
+            // Atualiza o nome e o tipo se presentes
+            if (nome) dadosAtualizados.nome = nome;
+            if (tipo) dadosAtualizados.tipo = tipo;
+
+            // Verifica e atualiza a senha se fornecida
+            if (senha) {
+                dadosAtualizados.senha = await bcrypt.hash(senha, 10);
+            }
+
+            // Busca os dados do usuário para comparação
+            const usuario = await prisma.usuarios.findUnique({
+                where: { id: Number(id) },
+                select: {
+                    email: true,
+                    telefone: true,
+                },
+            });
+
+            if (!usuario) {
+                return res.status(404).send(tiposDeErro.usuarioNaoEncontrado);
+            }
+
+            // Verifica e atualiza o email, se necessário
+            if (email && usuario.email !== email.toLowerCase()) {
+                const emailUnico = await validarEmailUnico(email, usuarioService);
+                if (!emailUnico) {
+                    return res.status(400).send(tiposDeErro.dadosInvalidos('Email já está em uso'));
+                }
+                dadosAtualizados.email = email.toLowerCase();
+            }
+
+            // Verifica e atualiza o telefone, se necessário
+            if (telefone && usuario.telefone !== telefone) {
+                const telefoneUnico = await validarTelefoneUnico(telefone, usuarioService);
+                if (!telefoneUnico) {
+                    return res.status(400).send(tiposDeErro.dadosInvalidos('Telefone já está em uso'));
+                }
+                dadosAtualizados.telefone = telefone;
+            }
+
+            // Atualiza o usuário com os dados fornecidos
+            const result = await usuarioService.atualizarUsuario(id, dadosAtualizados);
+            return res.status(200).send(result);
+
+        } catch (error) {
+            return res.status(500).send({ error: 'Erro ao atualizar usuário', message: error.message });
+        }
+    },
+
+    async atualizarUsuarioAdmin(req, res) {
+        const { id } = req.params;
+        const { nome, email, telefone, tipo } = req.body;
         try {
             const usuarioExistente = await usuarioService.buscarUsuarioPorId(id);
             if (!usuarioExistente) {
@@ -64,30 +125,7 @@ export const usuarioController = {
                     telefone: true
                 }
             })
-            const dadosAtualizados = {
-                nome,
-                senha: passwordEncripitado,
-                tipo
-            }
 
-            if (usuario.email !== email.toLowerCase()) {
-                dadosAtualizados.email = email.toLowerCase();
-            }
-
-            if (usuario.telefone !== telefone) {
-                dadosAtualizados.telefone = telefone;
-            }
-
-            if (!dadosAtualizados.telefone && !(await validarTelefoneUnico(telefone, usuarioService))) {
-                return res.status(400).send(tiposDeErro.dadosInvalidos('Telefone já está em uso'));
-            }
-
-            if (!dadosAtualizados.email && !(await validarEmailUnico(email, usuarioService))) {
-                return res.status(400).send(tiposDeErro.dadosInvalidos('Email já está em uso'));
-            }
-
-            const result = await usuarioService.atualizarUsuario(id, dadosAtualizados);
-            res.status(200).send(result);
         } catch (error) {
             res.status(500).send({ error: 'Erro ao atualizar usuário', message: error.message });
         }

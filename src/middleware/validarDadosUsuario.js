@@ -4,7 +4,7 @@ import { validarEmail, validarSenha, validarTelefone, validarTipoUsuario } from 
 export const validarDadosUsuario = (req, res, next) => {
     const { nome, email, senha, telefone, tipo } = req.body;
     
-    if (!nome ||!email ||!senha ||!telefone ||!tipo) {
+    if (!nome ||!email ||!telefone ||!tipo) {
         return res.status(400).json(tiposDeErro.dadosInvalidos('Preencha os campos obrigatórios.'));
     }
 
@@ -12,9 +12,12 @@ export const validarDadosUsuario = (req, res, next) => {
         return res.status(400).json(tiposDeErro.dadosInvalidos('Telefone inválido. Deve conter 11 dígitos.'));
     }
 
-    if (!validarSenha(senha)) {
-        return res.status(400).json(tiposDeErro.dadosInvalidos('Senha deve conter uma letra minúscula, uma letra maiúscula, um número e um caractere especial. Com o tamanho total de no minímo 8 caracteres.'));
+    if (senha) {
+        if (!validarSenha(senha)) {
+            return res.status(400).json(tiposDeErro.dadosInvalidos('Senha deve conter uma letra minúscula, uma letra maiúscula, um número e um caractere especial. Com o tamanho total de no minímo 8 caracteres.'));
+        }
     }
+
 
     if (!validarEmail(email)) {
         return res.status(400).json(tiposDeErro.dadosInvalidos('Formato de email inválido'));
