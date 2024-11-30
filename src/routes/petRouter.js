@@ -11,6 +11,10 @@ export const petRouter = () => {
       return await petController.listarPets(req, res);
    })
 
+   router.get('/pets/:idade', async (req, res) => { 
+      return await petController.buscarPetsPorIdade(req, res);
+   })
+
    router.get('/pet/:id', async (req, res) => {
       return await petController.buscarPetPorId(req, res);
    })

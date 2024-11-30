@@ -26,7 +26,7 @@ export const usuarioService = {
 		});
 	},
 
-	criarUsuario: async (nome, email, senha, telefone, tipo) => {
+	criarUsuario: async (nome, email, senha, telefone, tipo, endereco) => {
 		const passwordEncripitado = await bcrypt.hash(senha, 10);
 
 		return await prisma.usuarios.create({
@@ -35,7 +35,8 @@ export const usuarioService = {
 				email: email.toLowerCase(),
 				senha: passwordEncripitado,
 				telefone,
-				tipo
+				tipo,
+				endereco
 			}
 		});
 	},

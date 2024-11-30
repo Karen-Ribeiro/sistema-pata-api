@@ -8,8 +8,10 @@ export const petController  = {
             const result = await petService.listaPets({
                 personalidade: req.query.personalidade,
                 tamanho: req.query.tamanho,
-                especie: req.query.especie
+                especie: req.query.especie,
+                adotado: req.query.adotado
             })
+
             res.status(200).send(result);
         } catch (error) {
             res.status(500).send({ error: 'Erro ao listar pets', message: error.message });
@@ -27,6 +29,16 @@ export const petController  = {
             res.status(200).send(result);
         } catch (error) {
             res.status(500).send({ error: 'Erro ao buscar pet', message: error.message });
+        }
+    },
+
+    async buscarPetsPorIdade(req, res) {
+        const { idade } = req.params
+        try {
+            const result = await petService.buscarPetsPorIdade(idade)
+            res.status(200).send(result);
+        } catch (error) {
+            res.status(500).send({ error: 'Erro ao buscar pets por idade', message: error.message });
         }
     },
 

@@ -2,13 +2,13 @@ import { prisma } from "../utils/prisma.js"
 
 export const petService = {
 
-    listaPets: async ({ personalidade, tamanho, especie }) => {
+    listaPets: async ({ personalidade, tamanho, especie, adotado }) => {
         
         const condicaoDeBusca = {
-            adotado: false,
             ...(personalidade && { personalidade }),
             ...(tamanho && { tamanho }),
-            ...(especie && { especie })
+            ...(especie && { especie }),
+            ...(adotado && { adotado }),
         }
 
         return await prisma.pets.findMany({
@@ -21,6 +21,19 @@ export const petService = {
             where: {
                 id: Number(id)
             },
+        });
+    },
+
+    buscarPetsPorIdade: async (idade) => {
+        const dataLimite = new Date();
+        dataLimite.setFullYear(dataLimite.getFullYear() - idade);
+
+        return await prisma.pets.findMany({
+            where: {
+                data_nascimento: {
+                    gte: dataLimite
+                }
+            }
         });
     },
 

@@ -31,7 +31,7 @@ export const usuarioController = {
 
     async criarUsuario(req, res) {
         
-        const { nome, email, senha, telefone, tipo } = req.body;
+        const { nome, email, senha, telefone, tipo, endereco } = req.body;
         try {
             if (!(await validarTelefoneUnico(telefone, usuarioService))) {
                 return res.status(400).send(tiposDeErro.dadosInvalidos('Telefone já está em uso'));
@@ -41,7 +41,7 @@ export const usuarioController = {
                 return res.status(400).send(tiposDeErro.dadosInvalidos('Email já está em uso'));
             }
 
-            const result = await usuarioService.criarUsuario(nome, email, senha, telefone, tipo);
+            const result = await usuarioService.criarUsuario(nome, email, senha, telefone, tipo, endereco);
             res.status(201).send(result);
         } catch (error) {
             res.status(500).send({ error: 'Erro ao criar usuário' , message: error.message });
