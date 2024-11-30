@@ -2,9 +2,9 @@ import { tiposDeErro } from "../utils/error.js";
 import { validarEmail, validarSenha, validarTelefone, validarTipoUsuario } from "../utils/validarDados.js";
 
 export const validarDadosUsuario = (req, res, next) => {
-    const { nome, email, senha, telefone, tipo, endereco } = req.body;
+    const { nome, email, senha, telefone, tipo } = req.body;
     
-    if (!nome ||!email ||!telefone ||!tipo || !endereco) {
+    if (!nome ||!email ||!telefone ||!tipo) {
         return res.status(400).json(tiposDeErro.dadosInvalidos('Preencha os campos obrigatórios.'));
     }
 

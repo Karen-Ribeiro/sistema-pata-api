@@ -4,12 +4,12 @@ import { tiposDeErro } from "../utils/error.js";
 export const petController  = {
     
     async listarPets(req, res) {
-        console.log('Parâmetros da query:', req.query);
         try {
             const result = await petService.listaPets({
                 personalidade: req.query.personalidade,
                 tamanho: req.query.tamanho,
                 especie: req.query.especie,
+                ordenar: req.query.ordenar,
                 adotado: req.query.adotado === 'true' ? true : req.query.adotado === 'false' ? false : undefined
             });
 

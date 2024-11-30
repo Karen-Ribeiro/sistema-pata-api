@@ -2,17 +2,30 @@ import { prisma } from "../utils/prisma.js"
 
 export const petService = {
 
-    listaPets: async ({ personalidade, tamanho, especie, adotado }) => {
-        
-        const condicaoDeBusca = {
+    async listaPets({ personalidade, tamanho, especie, adotado, ordenar }) {
+        const where = {
             ...(personalidade && { personalidade }),
             ...(tamanho && { tamanho }),
-            ...(especie && { especie }),
-            ...(adotado && { adotado }),
-        }
+            ...(especie && {
+                especie: {
+                    contains: especie, 
+                    mode: 'insensitive', 
+                }
+            }),
+            ...(adotado !== undefined && { adotado }),
+        };
 
+        // Definindo a ordenação, se aplicável
+        const orderBy = ordenar === 'maisNovo'
+            ? { data_nascimento: 'desc' } 
+            : ordenar === 'maisVelho'
+                ? { data_nascimento: 'asc' } 
+                : undefined; 
+
+   
         return await prisma.pets.findMany({
-            where: condicaoDeBusca
+            where,
+            orderBy, 
         });
     },
 
