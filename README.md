@@ -8,7 +8,7 @@
 5. [Instalação e Configuração](#instalação-e-configuração)
 6. [Como Usar](#como-usar)
 7. [Contribuição](#contribuição)
-8. [Licença](#licença)
+
 
 ---
 
@@ -153,5 +153,3 @@ Sistema-Pata/
 ## Contribuição
 Contribuições são bem-vindas! Siga as diretrizes de contribuição e abra issues para melhorias ou para relatar problemas.
 
-## Licença
-Este projeto está licenciado sob a Licença MIT.
