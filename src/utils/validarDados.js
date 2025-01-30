@@ -1,21 +1,45 @@
 import { prisma } from "../utils/prisma.js"
 
-function validarTelefone(telefone) {
+export function validarTelefone(telefone) {
     const numeroLimpo = telefone.replace(/\D/g, '');    
     return numeroLimpo.length === 11;
 }
 
-function validarEmail(email) {
+export function validarEmail(email) {
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regexEmail.test(email);
 }   
 
-function validarTipoUsuario(tipo) {
+export function validarTipoUsuario(tipo) {
     return tipo === 'usuario' || tipo === 'administrador';
 }
 
+export function validarSenha(senha) {
+    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regexSenha.test(senha);
+}
 
-async function validarTelefoneUnico(telefone) {
+
+export function validarPetPersonalidade(personalidade) {
+    return personalidade === 'calmo' || personalidade === 'brincalhao' || personalidade === 'independente';
+}
+
+export function validarPetTamanho(tamanho) {
+    return tamanho === 'pequeno' || tamanho ==='medio' || tamanho === 'grande';
+}
+
+export function formatarData(dataNascimento) {
+    const [dia, mes, ano] = dataNascimento.split('-').map(Number);
+    const dataFormatada = new Date(ano, mes - 1, dia);
+    return dataFormatada.toISOString().split('T')[0];
+}
+
+export function validarDataNascimento(data) {
+    const formatoValido = /^\d{2}-\d{2}-\d{4}$/.test(data);
+    return formatoValido;
+}
+
+export async function validarTelefoneUnico(telefone) {
     const numeroLimpo = telefone.replace(/\D/g, '');
     
     const usuarioExistente = await prisma.usuarios.findFirst({ 
@@ -24,18 +48,12 @@ async function validarTelefoneUnico(telefone) {
     return !usuarioExistente;
 }
 
-async function validarEmailUnico(email) {
+export async function validarEmailUnico(email) {
     
     const usuarioExistente = await prisma.usuarios.findFirst({ 
-        where: { email: email.toLowerCase() }
+        where: {
+            email: email.toLowerCase()
+        }
     });
     return !usuarioExistente;
 }
-
-export { 
-    validarTelefone,
-    validarEmail,
-    validarTipoUsuario,
-    validarTelefoneUnico,
-    validarEmailUnico
-};
